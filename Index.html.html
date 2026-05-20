@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SoloBufala">
+<title>🐃 SoloBufala</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1A5C38;
+    --verde-med: #2E7D52;
+    --verde-clar: #4CAF78;
+    --verde-hint: #E8F5EE;
+    --crema: #FDF8F0;
+    --crema-osc: #F5EDD8;
+    --naranja: #E8820C;
+    --rojo: #D63031;
+    --azul: #0984E3;
+    --morado: #6C5CE7;
+    --gris: #636E72;
+    --gris-clar: #EFEFEF;
+    --blanco: #FFFFFF;
+    --sombra: 0 4px 20px rgba(0,0,0,0.10);
+    --radio: 20px;
+    --radio-sm: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--crema);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 110px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-med) 100%);
+    padding: 50px 20px 22px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content:''; position:absolute; top:-40px; right:-40px;
+    width:180px; height:180px;
+    background:rgba(255,255,255,0.06); border-radius:50%;
+  }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
+  .header-brands { display:flex; flex-direction:column; gap:2px; }
+  .header-main { font-size:26px; font-weight:900; line-height:1.1; }
+  .header-sub { font-size:12px; font-weight:700; opacity:0.75; letter-spacing:0.5px; margin-top:2px; }
+  .header-fecha { font-size:13px; opacity:0.85; margin-top:6px; font-weight:600; }
+  .header-emoji { font-size:44px; }
+
+  /* NAV */
+  .nav {
+    display:flex; background:var(--blanco);
+    border-bottom:2px solid var(--gris-clar);
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  }
+  .nav-btn {
+    flex:1; padding:12px 4px; border:none; background:none;
+    font-family:'Nunito',sans-serif;
+    font-size:10px; font-weight:700;
+    color:var(--gris); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    transition:all 0.2s;
+  }
+  .nav-ico { font-size:20px; }
+  .nav-btn.active { color:var(--verde); }
+  .nav-btn.active .nav-ico-wrap {
+    background:var(--verde-hint); border-radius:10px; padding:3px 10px;
+  }
+
+  /* PÁGINAS */
+  .page { display:none; padding:18px 16px; animation:fadeIn 0.22s ease; }
+  .page.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* CARDS */
+  .card { background:var(--blanco); border-radius:var(--radio); padding:18px; margin-bottom:14px; box-shadow:var(--sombra); }
+  .card-title { font-size:15px; font-weight:800; color:var(--verde); display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  .card-title .ct-ico { font-size:20px; }
+
+  /* INPUTS */
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:11px; font-weight:900; color:var(--gris); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
+  .input-grande {
+    width:100%; padding:15px 16px;
+    font-family:'Nunito',sans-serif; font-size:20px; font-weight:700;
+    border:2.5px solid var(--gris-clar); border-radius:var(--radio-sm);
+    background:var(--crema); color:#1A1A1A;
+    transition:border-color 0.2s, background 0.2s;
+    -webkit-appearance:none;
+  }
+  .input-grande:focus { outline:none; border-color:var(--verde); background:var(--verde-hint); }
+  .input-grande::placeholder { color:#CCC; font-weight:600; font-size:17px; }
+  .input-prefix { position:relative; }
+  .input-prefix .prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:19px; font-weight:800; color:var(--verde); }
+  .input-prefix .input-grande { padding-left:34px; }
+  select.input-grande {
+    appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231A5C38' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center; padding-right:40px;
+  }
+
+  /* GRID 2 COL */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; }
+
+  /* BOTONES SELECCIONABLES */
+  .sel-btn {
+    padding:13px 6px; border:2.5px solid var(--gris-clar);
+    border-radius:var(--radio-sm); background:var(--crema);
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:800;
+    color:var(--gris); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    transition:all 0.18s; line-height:1.2; text-align:center;
+  }
+  .sel-btn .sb-ico { font-size:26px; }
+  .sel-btn.active-verde  { border-color:var(--verde);   background:var(--verde-hint); color:var(--verde); }
+  .sel-btn.active-rojo   { border-color:var(--rojo);    background:#FFEBEE;           color:var(--rojo); }
+  .sel-btn.active-azul   { border-color:var(--azul);    background:#E3F2FD;           color:var(--azul); }
+  .sel-btn.active-naranja{ border-color:var(--naranja); background:#FFF3E0;           color:var(--naranja); }
+  .sel-btn.active-morado { border-color:var(--morado);  background:#F0EEFF;           color:var(--morado); }
+
+  /* BADGE ORIGEN */
+  .badge-origen {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:4px 10px; border-radius:20px;
+    font-size:11px; font-weight:800;
+  }
+  .bo-finca    { background:#FFF3E0; color:var(--naranja); }
+  .bo-queseria { background:var(--verde-hint); color:var(--verde); }
+  .bo-compartido { background:#F0EEFF; color:var(--morado); }
+
+  /* BOTÓN GUARDAR */
+  .btn-guardar {
+    width:100%; padding:17px;
+    background:linear-gradient(135deg, var(--verde) 0%, var(--verde-clar) 100%);
+    color:white; border:none; border-radius:var(--radio);
+    font-family:'Nunito',sans-serif; font-size:19px; font-weight:900;
+    cursor:pointer; box-shadow:0 6px 20px rgba(26,92,56,0.32);
+    transition:transform 0.15s, box-shadow 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .btn-guardar:active { transform:scale(0.97); box-shadow:0 2px 10px rgba(26,92,56,0.2); }
+  .btn-secundario {
+    width:100%; padding:15px;
+    background:var(--crema-osc); color:var(--verde);
+    border:2px solid var(--verde); border-radius:var(--radio);
+    font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+
+  /* RESUMEN CARDS */
+  .res-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .res-card { border-radius:14px; padding:14px; text-align:center; }
+  .res-card .r-ico { font-size:24px; margin-bottom:3px; }
+  .res-card .r-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; opacity:0.75; }
+  .res-card .r-val { font-size:20px; font-weight:900; margin-top:2px; }
+  .res-card.verde { background:var(--verde-hint); color:var(--verde); }
+  .res-card.rojo  { background:#FFEBEE; color:var(--rojo); }
+  .res-card.azul  { background:#E3F2FD; color:var(--azul); }
+  .res-card.naranja { background:#FFF3E0; color:var(--naranja); }
+  .res-card.morado { background:#F0EEFF; color:var(--morado); }
+  .res-card.full { grid-column:1/-1; }
+
+  /* LISTA REGISTROS */
+  .reg-item { display:flex; align-items:center; gap:10px; padding:12px 0; border-bottom:1.5px solid var(--gris-clar); }
+  .reg-item:last-child { border-bottom:none; }
+  .reg-ico-wrap { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .ri-entrada    { background:#E8F5E9; }
+  .ri-salida-q   { background:#FFEBEE; }
+  .ri-salida-f   { background:#FFF3E0; }
+  .ri-salida-c   { background:#F0EEFF; }
+  .ri-produccion { background:#E3F2FD; }
+  .ri-venta      { background:#FFF8E1; }
+  .reg-info { flex:1; min-width:0; }
+  .reg-tipo  { font-size:11px; font-weight:800; color:var(--gris); text-transform:uppercase; }
+  .reg-desc  { font-size:14px; font-weight:700; color:#1A1A1A; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .reg-hora  { font-size:11px; color:var(--gris); margin-top:1px; }
+  .reg-monto { font-size:16px; font-weight:900; text-align:right; flex-shrink:0; }
+  .rm-pos { color:var(--verde); }
+  .rm-neg { color:var(--rojo); }
+  .rm-neu { color:var(--azul); }
+  .rm-finca { color:var(--naranja); }
+  .rm-comp { color:var(--morado); }
+
+  /* HISTORIAL */
+  .fecha-grupo { margin-bottom:18px; }
+  .fecha-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .fecha-label { font-size:11px; font-weight:900; color:var(--verde); text-transform:uppercase; letter-spacing:0.8px; padding:5px 12px; background:var(--verde-hint); border-radius:20px; }
+
+  /* USUARIO */
+  .usuario-btn {
+    padding:14px 6px; border:2.5px solid var(--gris-clar); border-radius:var(--radio-sm);
+    background:var(--crema); font-family:'Nunito',sans-serif;
+    font-size:13px; font-weight:800; color:var(--gris); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:5px; transition:all 0.18s;
+  }
+  .usuario-btn .u-ico { font-size:30px; }
+  .usuario-btn.selected { border-color:var(--naranja); background:#FFF3E0; color:var(--naranja); }
+
+  /* TOAST */
+  .toast {
+    position:fixed; bottom:115px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--verde); color:white;
+    padding:13px 22px; border-radius:40px;
+    font-size:14px; font-weight:800;
+    box-shadow:0 8px 24px rgba(0,0,0,0.18);
+    opacity:0; transition:all 0.28s;
+    white-space:nowrap; z-index:999; pointer-events:none;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* EMPTY */
+  .empty { text-align:center; padding:36px 20px; color:var(--gris); }
+  .empty .e-ico { font-size:50px; margin-bottom:10px; }
+  .empty p { font-size:15px; font-weight:700; }
+  .empty small { font-size:12px; font-weight:600; opacity:0.7; }
+
+  /* PWA BANNER */
+  .pwa-banner { background:linear-gradient(135deg,#0984E3,#74B9FF); color:white; border-radius:14px; padding:14px 16px; margin-bottom:14px; font-size:12px; font-weight:700; line-height:1.5; display:flex; gap:10px; align-items:flex-start; }
+  .pwa-banner .p-ico { font-size:24px; flex-shrink:0; }
+  .pwa-close { background:rgba(255,255,255,0.2); border:none; color:white; border-radius:20px; padding:4px 10px; font-size:11px; font-weight:800; cursor:pointer; margin-top:5px; font-family:'Nunito',sans-serif; display:block; }
+
+  /* INFO BOX */
+  .info-box { background:var(--crema-osc); border-left:4px solid var(--verde); border-radius:0 10px 10px 0; padding:12px 14px; margin-bottom:12px; font-size:13px; font-weight:700; color:var(--gris); line-height:1.5; }
+  .info-box strong { color:var(--verde); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-brands">
+      <div class="header-main">🐃 SoloBufala</div>
+      <div class="header-sub">FINCA VIGILANCIA</div>
+      <div class="header-fecha" id="fechaHoy"></div>
+    </div>
+    <div class="header-emoji">🧀</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('registrar')" id="nav-registrar">
+    <div class="nav-ico-wrap"><span class="nav-ico">✏️</span></div><span>Registrar</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('hoy')" id="nav-hoy">
+    <div class="nav-ico-wrap"><span class="nav-ico">📊</span></div><span>Hoy</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('historial')" id="nav-historial">
+    <div class="nav-ico-wrap"><span class="nav-ico">📋</span></div><span>Historial</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('ajustes')" id="nav-ajustes">
+    <div class="nav-ico-wrap"><span class="nav-ico">⚙️</span></div><span>Ajustes</span>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA: REGISTRAR
+══════════════════════════════════════ -->
+<div class="page active" id="page-registrar">
+
+  <div id="pwa-card">
+    <div class="pwa-banner">
+      <span class="p-ico">📱</span>
+      <div>
+        Para guardar como app en iPhone: toca <strong>Compartir</strong> → <strong>"Añadir a pantalla de inicio"</strong>
+        <button class="pwa-close" onclick="document.getElementById('pwa-card').style.display='none'">Entendido ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIÉN REGISTRA -->
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">👤</span> ¿Quién registra?</div>
+    <div class="grid2" id="usuarioGrid"></div>
+  </div>
+
+  <!-- QUÉ VAS A REGISTRAR -->
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">📝</span> ¿Qué vas a registrar?</div>
+    <div class="grid2">
+      <button class="sel-btn active-verde" onclick="selectTipo('entrada')" id="tipo-entrada">
+        <span class="sb-ico">💰</span>Dinero que<br>entró
+      </button>
+      <button class="sel-btn" onclick="selectTipo('salida')" id="tipo-salida">
+        <span class="sb-ico">🛒</span>Dinero que<br>salió
+      </button>
+      <button class="sel-btn" onclick="selectTipo('produccion')" id="tipo-produccion">
+        <span class="sb-ico">🧀</span>Queso<br>producido
+      </button>
+      <button class="sel-btn" onclick="selectTipo('venta')" id="tipo-venta">
+        <span class="sb-ico">🤝</span>Queso<br>vendido
+      </button>
+    </div>
+  </div>
+
+  <!-- FORM: ENTRADA DE DINERO -->
+  <div class="card" id="form-entrada">
+    <div class="card-title"><span class="ct-ico">💰</span> Dinero que entró</div>
+    <div class="field">
+      <label>Valor en pesos</label>
+      <div class="input-prefix">
+        <span class="prefix">$</span>
+        <input type="number" class="input-grande" id="in-monto" placeholder="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field">
+      <label>¿De qué? (opcional)</label>
+      <input type="text" class="input-grande" id="in-desc" placeholder="Ej: venta queso costeño" style="font-size:16px">
+    </div>
+  </div>
+
+  <!-- FORM: SALIDA DE DINERO -->
+  <div class="card" id="form-salida" style="display:none">
+    <div class="card-title"><span class="ct-ico">🛒</span> Dinero que salió</div>
+
+    <div class="info-box">
+      <strong>¿Este gasto es de la quesería, la finca o los dos?</strong><br>
+      Esto ayuda a saber cuánto cuesta cada queso.
+    </div>
+
+    <div class="field">
+      <label>¿A dónde va este gasto?</label>
+      <div class="grid3">
+        <button class="sel-btn active-verde" onclick="selectOrigen('queseria')" id="origen-queseria">
+          <span class="sb-ico">🧀</span>Solo<br>Quesería
+        </button>
+        <button class="sel-btn" onclick="selectOrigen('finca')" id="origen-finca">
+          <span class="sb-ico">🐃</span>Solo<br>Finca
+        </button>
+        <button class="sel-btn" onclick="selectOrigen('compartido')" id="origen-compartido">
+          <span class="sb-ico">⚡</span>Ambos<br>(luz, agua…)
+        </button>
+      </div>
+    </div>
+
+    <!-- Ejemplos dinámicos -->
+    <div id="ejemplos-origen" class="info-box" style="font-size:12px; margin-bottom:12px;"></div>
+
+    <div class="field">
+      <label>Valor en pesos</label>
+      <div class="input-prefix">
+        <span class="prefix">$</span>
+        <input type="number" class="input-grande" id="sal-monto" placeholder="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field">
+      <label>¿Qué compraste o pagaste?</label>
+      <input type="text" class="input-grande" id="sal-desc" placeholder="Ej: vacuna búfala" style="font-size:16px">
+    </div>
+
+    <!-- % para compartido -->
+    <div id="campo-pct" style="display:none">
+      <div class="field">
+        <label>¿Qué % corresponde a la quesería?</label>
+        <input type="number" class="input-grande" id="sal-pct" placeholder="40" inputmode="numeric" min="1" max="99">
+      </div>
+      <div class="info-box" style="font-size:12px;">
+        Si no sabes el %, usa estos estimados:<br>
+        💡 <strong>Luz:</strong> 30% · <strong>Agua:</strong> 25% · <strong>Gas:</strong> 40%<br>
+        💡 <strong>Empleado finca que ayuda en quesería:</strong> % del tiempo que trabaja allí
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM: PRODUCCIÓN -->
+  <div class="card" id="form-produccion" style="display:none">
+    <div class="card-title"><span class="ct-ico">🧀</span> Queso producido</div>
+    <div class="field">
+      <label>Producto</label>
+      <select class="input-grande" id="p-producto">
+        <option value="">Selecciona...</option>
+        <option>Queso fresco / costeño</option>
+        <option>Mozzarella</option>
+        <option>Queso semimaduro</option>
+        <option>Queso de pimienta</option>
+        <option>Queso de ají morita</option>
+        <option>Queso de pesto</option>
+        <option>Mantequilla</option>
+        <option>Yogurt</option>
+        <option>Ricotta / requesón</option>
+        <option>Bebida de suero</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Kilos producidos</label>
+      <input type="number" class="input-grande" id="p-cantidad" placeholder="0.0" inputmode="decimal" step="0.1">
+    </div>
+    <div class="field">
+      <label>Litros de leche usados</label>
+      <input type="number" class="input-grande" id="p-litros" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label>Insumos usados hoy (opcional)</label>
+      <input type="text" class="input-grande" id="p-insumos" placeholder="Ej: 200g sal, 5ml cuajo" style="font-size:15px">
+    </div>
+  </div>
+
+  <!-- FORM: VENTA -->
+  <div class="card" id="form-venta" style="display:none">
+    <div class="card-title"><span class="ct-ico">🤝</span> Queso vendido</div>
+    <div class="field">
+      <label>Producto</label>
+      <select class="input-grande" id="v-producto">
+        <option value="">Selecciona...</option>
+        <option>Queso fresco / costeño</option>
+        <option>Mozzarella</option>
+        <option>Queso semimaduro</option>
+        <option>Queso de pimienta</option>
+        <option>Queso de ají morita</option>
+        <option>Queso de pesto</option>
+        <option>Mantequilla</option>
+        <option>Yogurt</option>
+        <option>Ricotta / requesón</option>
+        <option>Bebida de suero</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Kilos vendidos</label>
+      <input type="number" class="input-grande" id="v-cantidad" placeholder="0.0" inputmode="decimal" step="0.1">
+    </div>
+    <div class="field">
+      <label>Precio por kilo ($)</label>
+      <div class="input-prefix">
+        <span class="prefix">$</span>
+        <input type="number" class="input-grande" id="v-precio" placeholder="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field">
+      <label>Total venta</label>
+      <div style="padding:14px 16px; background:var(--verde-hint); border-radius:var(--radio-sm); border:2px solid var(--verde);">
+        <span style="font-size:22px; font-weight:900; color:var(--verde);" id="v-total-display">$0</span>
+        <span style="font-size:12px; font-weight:700; color:var(--gris); margin-left:8px;">calculado automático</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Cliente</label>
+      <select class="input-grande" id="v-cliente">
+        <option value="">Selecciona...</option>
+        <option>Restaurante</option>
+        <option>Tienda / supermercado</option>
+        <option>Distribuidor</option>
+        <option>Cliente particular</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Nombre del cliente (opcional)</label>
+      <input type="text" class="input-grande" id="v-cliente-nombre" placeholder="Ej: Restaurante El Bufalo" style="font-size:15px">
+    </div>
+  </div>
+
+  <button class="btn-guardar" onclick="guardar()">
+    <span>✅</span> Guardar registro
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA: HOY
+══════════════════════════════════════ -->
+<div class="page" id="page-hoy">
+  <div class="res-grid" id="resGrid"></div>
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">📋</span> Registros de hoy</div>
+    <div id="listaHoy"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA: HISTORIAL
+══════════════════════════════════════ -->
+<div class="page" id="page-historial">
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">📅</span> Todos los registros</div>
+    <div id="listaHistorial"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">📤</span> Exportar</div>
+    <p style="font-size:13px;color:var(--gris);font-weight:600;margin-bottom:12px">
+      Copia el resumen del día para enviar por WhatsApp
+    </p>
+    <button class="btn-guardar" onclick="exportar()" style="background:linear-gradient(135deg,#0984E3,#74B9FF)">
+      <span>📱</span> Copiar resumen WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA: AJUSTES
+══════════════════════════════════════ -->
+<div class="page" id="page-ajustes">
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">👥</span> Personas</div>
+    <p style="font-size:12px;color:var(--gris);font-weight:600;margin-bottom:12px">
+      Agrega los nombres de quienes usan la app
+    </p>
+    <div id="listaUsuariosAjustes" style="margin-bottom:12px"></div>
+    <div style="display:flex;gap:10px;">
+      <input type="text" class="input-grande" id="nuevo-usuario" placeholder="Nombre..." style="font-size:15px;flex:1">
+      <button onclick="agregarUsuario()" style="padding:14px 16px;background:var(--verde);color:white;border:none;border-radius:12px;font-size:20px;cursor:pointer;">+</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">ℹ️</span> ¿Cómo clasificar los gastos?</div>
+    <div style="font-size:13px;font-weight:600;color:var(--gris);line-height:1.7;">
+      <div style="margin-bottom:8px"><span class="badge-origen bo-queseria">🧀 Quesería</span> — Sal, cuajo, empaques, moldes, mantenimiento de la quesera</div>
+      <div style="margin-bottom:8px"><span class="badge-origen bo-finca">🐃 Finca</span> — Vacunas, medicamentos, alimentación búfalas, veterinario, arreglo corrales</div>
+      <div><span class="badge-origen bo-compartido">⚡ Ambos</span> — Luz, agua, gas, empleados que trabajan en los dos lados<br>
+      <span style="font-size:11px;opacity:0.8;">→ Ingresa el % que corresponde a la quesería</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">🗑️</span> Borrar datos</div>
+    <button onclick="borrarTodo()" style="width:100%;padding:15px;background:#FFEBEE;color:var(--rojo);border:2px solid var(--rojo);border-radius:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">
+      🗑️ Borrar todos los registros
+    </button>
+  </div>
+
+  <div class="card" style="text-align:center;color:var(--gris);">
+    <div style="font-size:32px;margin-bottom:6px">🐃</div>
+    <div style="font-size:15px;font-weight:900;color:var(--verde)">SoloBufala</div>
+    <div style="font-size:11px;font-weight:700;margin-top:2px;opacity:0.6">Finca Vigilancia · v2.0</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── ESTADO GLOBAL ───
+let tipoActual = 'entrada';
+let origenActual = 'queseria';
+let usuarioActual = '';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzm5FYms-z1pu8NbmqY565qUNNNHycTCb0HYZsLEoUWLIPmWYNtdPi_ELqt00vC0vTj6Q/exec';
+let registros  = JSON.parse(localStorage.getItem('sb_registros')  || '[]');
+let usuarios   = JSON.parse(localStorage.getItem('sb_usuarios')   || '["María Margarita","Empleado 1","Empleado 2"]');
+
+async function enviarASheets(r) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...r,
+        precioPorKilo:  r.precioPorKilo  || 0,
+        cliente:        r.cliente        || '',
+        clienteNombre:  r.clienteNombre  || '',
+        insumos:        r.insumos        || '',
+      })
+    });
+  } catch(e) {
+    console.log('Sin conexion - guardado solo localmente');
+  }
+}
+
+const EJEMPLOS_ORIGEN = {
+  queseria:   '🧀 <strong>Ejemplos:</strong> sal, cuajo, empaques, moldes, limpieza quesera',
+  finca:      '🐃 <strong>Ejemplos:</strong> vacunas, medicamentos, comida búfalas, veterinario, arreglo corrales',
+  compartido: '⚡ <strong>Ejemplos:</strong> luz, agua, gas, empleado que trabaja en los dos lados'
+};
+
+// ─── INIT ───
+function init() {
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-CO', opts);
+  renderUsuariosBtns();
+  renderUsuariosAjustes();
+  actualizarEjemplos();
+}
+
+// ─── NAVEGACIÓN ───
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  document.getElementById('nav-' + p).classList.add('active');
+  if (p === 'hoy') renderHoy();
+  if (p === 'historial') renderHistorial();
+}
+
+// ─── USUARIOS ───
+const ICONOS = ['👩‍🍳','👨‍🌾','👷','🧑‍🌾','👩‍🔧','👤'];
+function renderUsuariosBtns() {
+  document.getElementById('usuarioGrid').innerHTML = usuarios.map((u,i) =>
+    `<button class="usuario-btn ${usuarioActual===u?'selected':''}" onclick="selUsuario('${u}')">
+      <span class="u-ico">${ICONOS[i%ICONOS.length]}</span>${u}
+    </button>`
+  ).join('');
+}
+function selUsuario(u) { usuarioActual = u; renderUsuariosBtns(); }
+function renderUsuariosAjustes() {
+  document.getElementById('listaUsuariosAjustes').innerHTML = usuarios.length
+    ? usuarios.map((u,i) =>
+        `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1.5px solid var(--gris-clar);">
+          <span style="font-size:14px;font-weight:700;">${ICONOS[i%ICONOS.length]} ${u}</span>
+          <button onclick="quitarUsuario(${i})" style="background:#FFEBEE;border:none;color:var(--rojo);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;">Quitar</button>
+        </div>`
+      ).join('')
+    : '<p style="color:var(--gris);font-size:13px;font-weight:600;">Sin personas aún</p>';
+}
+function agregarUsuario() {
+  const inp = document.getElementById('nuevo-usuario');
+  const n = inp.value.trim();
+  if (!n) return;
+  usuarios.push(n); guardarUsuarios(); inp.value = '';
+  renderUsuariosBtns(); renderUsuariosAjustes();
+  toast('✅ ' + n + ' agregado');
+}
+function quitarUsuario(i) {
+  if (!confirm('¿Quitar a ' + usuarios[i] + '?')) return;
+  usuarios.splice(i,1); guardarUsuarios();
+  renderUsuariosBtns(); renderUsuariosAjustes();
+}
+function guardarUsuarios() { localStorage.setItem('sb_usuarios', JSON.stringify(usuarios)); }
+
+// ─── TIPO REGISTRO ───
+const TIPO_COLORES = { entrada:'verde', salida:'rojo', produccion:'azul', venta:'naranja' };
+function selectTipo(t) {
+  tipoActual = t;
+  ['entrada','salida','produccion','venta'].forEach(x => {
+    const btn = document.getElementById('tipo-' + x);
+    btn.className = 'sel-btn' + (x === t ? ' active-' + TIPO_COLORES[x] : '');
+  });
+  document.getElementById('form-entrada').style.display  = t==='entrada'  ? 'block' : 'none';
+  document.getElementById('form-salida').style.display   = t==='salida'   ? 'block' : 'none';
+  document.getElementById('form-produccion').style.display = t==='produccion' ? 'block' : 'none';
+  document.getElementById('form-venta').style.display      = t==='venta'      ? 'block' : 'none';
+}
+
+// ─── ORIGEN GASTO ───
+const ORIGEN_COLORES = { queseria:'verde', finca:'naranja', compartido:'morado' };
+function selectOrigen(o) {
+  origenActual = o;
+  ['queseria','finca','compartido'].forEach(x => {
+    const btn = document.getElementById('origen-' + x);
+    btn.className = 'sel-btn' + (x === o ? ' active-' + ORIGEN_COLORES[x] : '');
+  });
+  document.getElementById('campo-pct').style.display = o==='compartido' ? 'block' : 'none';
+  actualizarEjemplos();
+}
+function actualizarEjemplos() {
+  const el = document.getElementById('ejemplos-origen');
+  if (el) el.innerHTML = EJEMPLOS_ORIGEN[origenActual] || '';
+}
+
+// ─── GUARDAR ───
+function guardar() {
+  if (!usuarioActual) { toast('⚠️ Primero selecciona quién registra'); return; }
+  const now = new Date();
+  const r = {
+    id: Date.now(), tipo: tipoActual, usuario: usuarioActual,
+    fecha: now.toISOString().split('T')[0],
+    hora: now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),
+  };
+
+  if (tipoActual === 'entrada') {
+    const m = parseFloat(document.getElementById('in-monto').value);
+    if (!m || m<=0) { toast('⚠️ Ingresa un valor mayor a 0'); return; }
+    r.monto = m;
+    r.descripcion = document.getElementById('in-desc').value.trim() || '—';
+    document.getElementById('in-monto').value = '';
+    document.getElementById('in-desc').value = '';
+  }
+  else if (tipoActual === 'salida') {
+    const m = parseFloat(document.getElementById('sal-monto').value);
+    if (!m || m<=0) { toast('⚠️ Ingresa un valor mayor a 0'); return; }
+    r.monto = m;
+    r.descripcion = document.getElementById('sal-desc').value.trim() || '—';
+    r.origen = origenActual;
+    if (origenActual === 'compartido') {
+      const pct = parseFloat(document.getElementById('sal-pct').value) || 30;
+      r.pctQueseria = pct;
+      r.montoQueseria = Math.round(m * pct / 100);
+    } else if (origenActual === 'queseria') {
+      r.pctQueseria = 100;
+      r.montoQueseria = m;
+    } else {
+      r.pctQueseria = 0;
+      r.montoQueseria = 0;
+    }
+    document.getElementById('sal-monto').value = '';
+    document.getElementById('sal-desc').value = '';
+    document.getElementById('sal-pct').value = '';
+  }
+  else if (tipoActual === 'produccion') {
+    const prod = document.getElementById('p-producto').value;
+    const cant = parseFloat(document.getElementById('p-cantidad').value);
+    if (!prod) { toast('⚠️ Selecciona un producto'); return; }
+    if (!cant || cant<=0) { toast('⚠️ Ingresa los kilos producidos'); return; }
+    r.producto  = prod;
+    r.cantidad  = cant;
+    r.litros    = parseFloat(document.getElementById('p-litros').value) || 0;
+    r.insumos   = document.getElementById('p-insumos').value.trim() || '';
+    document.getElementById('p-producto').value  = '';
+    document.getElementById('p-cantidad').value  = '';
+    document.getElementById('p-litros').value    = '';
+    document.getElementById('p-insumos').value   = '';
+  }
+  else if (tipoActual === 'venta') {
+    const prod   = document.getElementById('v-producto').value;
+    const cant   = parseFloat(document.getElementById('v-cantidad').value);
+    const precio = parseFloat(document.getElementById('v-precio').value);
+    if (!prod) { toast('⚠️ Selecciona un producto'); return; }
+    if (!cant || cant<=0) { toast('⚠️ Ingresa los kilos vendidos'); return; }
+    if (!precio || precio<=0) { toast('⚠️ Ingresa el precio por kilo'); return; }
+    r.producto      = prod;
+    r.cantidad      = cant;
+    r.precioPorKilo = precio;
+    r.monto         = Math.round(cant * precio);
+    r.cliente       = document.getElementById('v-cliente').value || '';
+    r.clienteNombre = document.getElementById('v-cliente-nombre').value.trim() || '';
+    document.getElementById('v-producto').value      = '';
+    document.getElementById('v-cantidad').value      = '';
+    document.getElementById('v-precio').value        = '';
+    document.getElementById('v-cliente').value       = '';
+    document.getElementById('v-cliente-nombre').value = '';
+    document.getElementById('v-total-display').textContent = '$0';
+  }
+
+  registros.unshift(r);
+  localStorage.setItem('sb_registros', JSON.stringify(registros));
+  enviarASheets(r);
+  toast('✅ Guardado');
+}
+
+// ─── RENDER HOY ───
+function renderHoy() {
+  const hoy = new Date().toISOString().split('T')[0];
+  const hoyR = registros.filter(r => r.fecha === hoy);
+
+  const entradas   = hoyR.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+(r.monto||0),0);
+  const salidasTot = hoyR.filter(r=>r.tipo==='salida').reduce((s,r)=>s+(r.monto||0),0);
+  const salidasQ   = hoyR.filter(r=>r.tipo==='salida').reduce((s,r)=>s+(r.montoQueseria||0),0);
+  const salidasF   = hoyR.filter(r=>r.tipo==='salida'&&r.origen==='finca').reduce((s,r)=>s+(r.monto||0),0);
+  const kgProd     = hoyR.filter(r=>r.tipo==='produccion').reduce((s,r)=>s+(r.cantidad||0),0);
+  const kgVend     = hoyR.filter(r=>r.tipo==='venta').reduce((s,r)=>s+(r.cantidad||0),0);
+  const litros     = hoyR.filter(r=>r.tipo==='produccion').reduce((s,r)=>s+(r.litros||0),0);
+
+  document.getElementById('resGrid').innerHTML = `
+    <div class="res-card verde"><div class="r-ico">💰</div><div class="r-label">Entró hoy</div><div class="r-val">${fp(entradas)}</div></div>
+    <div class="res-card rojo"><div class="r-ico">🛒</div><div class="r-label">Salió (total)</div><div class="r-val">${fp(salidasTot)}</div></div>
+    <div class="res-card verde"><div class="r-ico">🧀</div><div class="r-label">Gasto quesería</div><div class="r-val">${fp(salidasQ)}</div></div>
+    <div class="res-card naranja"><div class="r-ico">🐃</div><div class="r-label">Gasto finca</div><div class="r-val">${fp(salidasF)}</div></div>
+    <div class="res-card azul"><div class="r-ico">🧀</div><div class="r-label">Kg producidos</div><div class="r-val">${kgProd.toFixed(1)} kg</div></div>
+    <div class="res-card naranja"><div class="r-ico">🤝</div><div class="r-label">Kg vendidos</div><div class="r-val">${kgVend.toFixed(1)} kg</div></div>
+    ${totalVentas>0 ? `<div class="res-card verde full"><div class="r-ico">💵</div><div class="r-label">Total ventas del día</div><div class="r-val">${fp(totalVentas)}</div></div>` : ''}
+    ${litros>0 ? `<div class="res-card verde full"><div class="r-ico">🥛</div><div class="r-label">Litros de leche usados</div><div class="r-val">${litros} litros</div></div>` : ''}
+  `;
+
+  const lista = document.getElementById('listaHoy');
+  lista.innerHTML = hoyR.length
+    ? hoyR.map(r => itemHTML(r)).join('')
+    : `<div class="empty"><div class="e-ico">📭</div><p>Sin registros hoy</p><small>Usa Registrar para agregar</small></div>`;
+}
+
+// ─── RENDER HISTORIAL ───
+function renderHistorial() {
+  const lista = document.getElementById('listaHistorial');
+  if (!registros.length) {
+    lista.innerHTML = `<div class="empty"><div class="e-ico">📭</div><p>Sin registros aún</p></div>`;
+    return;
+  }
+  const porFecha = {};
+  registros.forEach(r => { if (!porFecha[r.fecha]) porFecha[r.fecha]=[]; porFecha[r.fecha].push(r); });
+  lista.innerHTML = Object.entries(porFecha).map(([fecha, regs]) => {
+    const ent = regs.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+(r.monto||0),0);
+    const sal = regs.filter(r=>r.tipo==='salida').reduce((s,r)=>s+(r.monto||0),0);
+    const d = new Date(fecha+'T12:00:00');
+    const lbl = d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});
+    return `<div class="fecha-grupo">
+      <div class="fecha-header">
+        <span class="fecha-label">${lbl}</span>
+        <div style="display:flex;gap:5px;">
+          ${ent>0?`<span style="font-size:11px;font-weight:800;color:var(--verde)">+${fp(ent)}</span>`:''}
+          ${sal>0?`<span style="font-size:11px;font-weight:800;color:var(--rojo)">-${fp(sal)}</span>`:''}
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0;padding:10px 14px;">
+        ${regs.map(r=>itemHTML(r)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── ITEM HTML ───
+function itemHTML(r) {
+  let ico, icoClass, montoStr, montoClass, desc, subtipo;
+  if (r.tipo==='entrada') {
+    ico='💰'; icoClass='ri-entrada'; montoStr='+'+fp(r.monto); montoClass='rm-pos';
+    desc=r.descripcion; subtipo='Entró';
+  } else if (r.tipo==='salida') {
+    const origenLabel = {queseria:'Quesería',finca:'Finca',compartido:'Compartido'}[r.origen||'queseria'];
+    if (r.origen==='finca') { ico='🐃'; icoClass='ri-salida-f'; montoClass='rm-finca'; }
+    else if (r.origen==='compartido') { ico='⚡'; icoClass='ri-salida-c'; montoClass='rm-comp'; }
+    else { ico='🛒'; icoClass='ri-salida-q'; montoClass='rm-neg'; }
+    montoStr = '-'+fp(r.monto);
+    desc = r.descripcion + (r.origen==='compartido'?` (${r.pctQueseria}% quesería)`:'');
+    subtipo = 'Salió · ' + origenLabel;
+  } else if (r.tipo==='produccion') {
+    ico='🧀'; icoClass='ri-produccion'; montoStr=(r.cantidad||0).toFixed(1)+' kg'; montoClass='rm-neu';
+    desc=r.producto+(r.litros?` · ${r.litros}L`:''); subtipo='Producción';
+  } else {
+    ico='🤝'; icoClass='ri-venta';
+    const totalVenta = r.monto || ((r.cantidad||0) * (r.precioPorKilo||0));
+    montoStr = totalVenta > 0 ? '+'+fp(totalVenta) : (r.cantidad||0).toFixed(1)+' kg';
+    montoClass='rm-pos';
+    const clienteInfo = r.clienteNombre ? r.clienteNombre : (r.cliente || '');
+    desc = r.producto + (clienteInfo ? ' · ' + clienteInfo : '') + ' (' + (r.cantidad||0).toFixed(1) + 'kg)';
+    subtipo='Venta';
+  }
+  return `<div class="reg-item">
+    <div class="reg-ico-wrap ${icoClass}">${ico}</div>
+    <div class="reg-info">
+      <div class="reg-tipo">${subtipo} · ${r.usuario}</div>
+      <div class="reg-desc">${desc}</div>
+      <div class="reg-hora">${r.hora}</div>
+    </div>
+    <div class="reg-monto ${montoClass}">${montoStr}</div>
+  </div>`;
+}
+
+// ─── EXPORTAR ───
+function exportar() {
+  if (!registros.length) { toast('⚠️ No hay registros'); return; }
+  const hoy = new Date().toISOString().split('T')[0];
+  const hoyR = registros.filter(r=>r.fecha===hoy);
+  const ent  = hoyR.filter(r=>r.tipo==='entrada').reduce((s,r)=>s+(r.monto||0),0);
+  const salQ = hoyR.filter(r=>r.tipo==='salida').reduce((s,r)=>s+(r.montoQueseria||0),0);
+  const salF = hoyR.filter(r=>r.tipo==='salida'&&r.origen==='finca').reduce((s,r)=>s+(r.monto||0),0);
+  const kgP  = hoyR.filter(r=>r.tipo==='produccion').reduce((s,r)=>s+(r.cantidad||0),0);
+  const kgV  = hoyR.filter(r=>r.tipo==='venta').reduce((s,r)=>s+(r.cantidad||0),0);
+  const totV = hoyR.filter(r=>r.tipo==='venta').reduce((s,r)=>s+(r.monto||0),0);
+  const lit  = hoyR.filter(r=>r.tipo==='produccion').reduce((s,r)=>s+(r.litros||0),0);
+
+  const txt = `🐃 *SOOLOBUFALA · Finca Vigilancia*
+📅 ${new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'})}
+
+💰 Entró: ${fp(ent)}
+🧀 Gastos quesería: ${fp(salQ)}
+🐃 Gastos finca: ${fp(salF)}
+📊 Diferencia: ${fp(ent-salQ)}
+
+🧀 Producido: ${kgP.toFixed(1)} kg
+🤝 Vendido: ${kgV.toFixed(1)} kg${totV>0?' · '+fp(totV):''}${lit>0?'\n🥛 Leche usada: '+lit+' litros':''}
+
+_Detalle:_
+${hoyR.map(r=>{
+  if(r.tipo==='entrada') return `✅ Entró ${fp(r.monto)} — ${r.descripcion}`;
+  if(r.tipo==='salida') return `❌ Salió ${fp(r.monto)} (${r.origen||'quesería'}) — ${r.descripcion}`;
+  if(r.tipo==='produccion') return `🧀 ${r.producto}: ${r.cantidad}kg`;
+  if(r.tipo==='venta') return `🤝 Vendió ${r.producto}: ${r.cantidad}kg`;
+}).join('\n')}`;
+
+  navigator.clipboard.writeText(txt)
+    .then(()=>toast('✅ ¡Copiado! Pega en WhatsApp'))
+    .catch(()=>prompt('Copia este texto:',txt));
+}
+
+// ─── BORRAR ───
+function borrarTodo() {
+  if (!confirm('¿Borrar TODOS los registros? No se puede deshacer.')) return;
+  registros=[]; localStorage.setItem('sb_registros','[]');
+  toast('🗑️ Registros borrados');
+}
+
+// ─── HELPERS ───
+function fp(n) { return '$'+(Math.round(n||0)).toLocaleString('es-CO'); }
+function toast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// Calcular total venta en tiempo real
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'v-cantidad' || e.target.id === 'v-precio') {
+    const cant   = parseFloat(document.getElementById('v-cantidad').value) || 0;
+    const precio = parseFloat(document.getElementById('v-precio').value)   || 0;
+    document.getElementById('v-total-display').textContent = fp(cant * precio);
+  }
+});
+
+init();
+</script>
+</body>
+</html>
